@@ -1,4 +1,4 @@
-#!../venv/bin/python
+#!/usr/bin/python3
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, ReLU
@@ -36,7 +36,7 @@ def main():
 
   model.fit(qcoords, color, batch_size=64, epochs=200)
 
-  model.evaluate(coords_ch4, color)
+  model.evaluate(qcoords, color)
 
 
 if __name__ == '__main__':
