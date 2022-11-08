@@ -1,10 +1,17 @@
 #!/usr/bin/python3
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation, ReLU
 import numpy as np
 
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation, ReLU
+
+import akida
+from akida import Device, NSoC_v2
+import cnn2snn
+
 def main():
+  device = akida.AKD1000()
+
   coords_ch4 = np.load('coords_ch4.npy')
   color = np.load('result_ch4.npy')
 
@@ -27,17 +34,26 @@ def main():
   model.add(Dense(1, input_shape=(2,), name='FC6'))
   model.add(Activation('sigmoid', name='sigmoid'))
 
+  model = cnn2snn.quantize(model, weight_quantization=4, activ_quantization=4)
   print(model.summary())
+
+  print('Akida Compatibility:', cnn2snn.check_model_compatibility(model, input_is_image=False))
 
   model.compile(loss='binary_crossentropy', 
                 optimizer='adam',
                 metrics=['accuracy']
                 )
-
-  model.fit(qcoords, color, batch_size=64, epochs=200)
-
+  model.fit(qcoords, color, batch_size=64, epochs=10)
   model.evaluate(qcoords, color)
 
+  model = cnn2snn.convert(model, input_is_image=False)
+  print(model.summary())
+
+  model.map(device)
+
+  qcoords_u8 = qcoords.astype(np.uint8)
+  outputs = model.forward(qcoords_u8, 0)
+  print(outputs)
 
 if __name__ == '__main__':
   main()
