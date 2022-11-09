@@ -3,7 +3,7 @@
 import numpy as np
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation, ReLU
+from tensorflow.keras.layers import Dense, Activation, ReLU, Conv2D, Conv1D
 
 import akida
 from akida import Device, NSoC_v2
@@ -18,9 +18,7 @@ def main():
   qcoords = coords_ch4*15
   qcoords = qcoords.round()
 
-
   model = Sequential()
-
   model.add(Dense(1000, input_shape=(2,), name='FC1'))
   model.add(ReLU(name='relu1'))
   model.add(Dense(500, input_shape=(2,), name='FC2'))
@@ -43,7 +41,7 @@ def main():
                 optimizer='adam',
                 metrics=['accuracy']
                 )
-  model.fit(qcoords, color, batch_size=64, epochs=10)
+  model.fit(qcoords, color, batch_size=64, epochs=200)
   model.evaluate(qcoords, color)
 
   model = cnn2snn.convert(model, input_is_image=False)
@@ -52,8 +50,8 @@ def main():
   model.map(device)
 
   qcoords_u8 = qcoords.astype(np.uint8)
-  outputs = model.forward(qcoords_u8, 0)
-  print(outputs)
+  #outputs = model.forward(qcoords_u8)
+  #print(outputs)
 
 if __name__ == '__main__':
   main()
