@@ -2,8 +2,8 @@
 
 ## Build the image
 
-Install docker
-cd in directory containing the project's Dockerfile, then:
+* Install docker,
+* cd in directory containing the project's Dockerfile, then:
 
 ```
 docker build -t think
