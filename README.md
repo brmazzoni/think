@@ -6,7 +6,7 @@
 * cd in directory containing the project's Dockerfile, then:
 
 ```
-docker build -t think
+docker build -t think .
 ```
 
 The first time, the build can take several minutes. Once it is completed:
